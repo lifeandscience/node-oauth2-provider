@@ -204,6 +204,24 @@ OAuth2Provider.prototype.oauth = function() {
             res.end(JSON.stringify(atok));
           });
         });
+      } else if('client_credentials' == req.body.grant_type) {
+        if(self.listeners('client_credentials_auth').length == 0) {
+          res.writeHead(401);
+          return res.end('client credentials (API-style) authentication not supported');
+        }
+        self.emit('client_credentials_auth', client_id, client_secret, function(err){
+          if(err) {
+            res.writeHead(400);
+            return res.end(err.message);
+          }
+
+          res.writeHead(200, {'Content-type': 'application/json'});
+
+          self._createAccessToken(null, client_id, function(atok) {
+            res.end(JSON.stringify(atok));
+          });
+        });
+        
       } else {
         self.emit('lookup_grant', client_id, client_secret, code, function(err, user_id) {
           if(err) {
