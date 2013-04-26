@@ -83,7 +83,7 @@ OAuth2Provider.prototype.login = function() {
       return res.end(e.message);
     }
 
-    self.emit('access_token', req, {
+    self.emit('access_token', req, res, {
       user_id: user_id,
       client_id: client_id,
       extra_data: extra_data,
